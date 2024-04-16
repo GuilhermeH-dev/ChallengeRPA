@@ -163,7 +163,8 @@ print(f"Time execution: {time_execution}")
 username = os.getlogin()
 
 #  =-=-==-=- Calling the functions -=-=-=-=-=
-check_and_create_folder("C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs")
+path_folder = f"C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs"
+check_and_create_folder(path_folder)
 create_work_item()
 log()
 
