@@ -140,23 +140,32 @@ def get_news():
         # =-=-==-=- Writing date to an Excel File -=-=-=-=-=     
         date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": result}  
         df = pd.DataFrame(date_for_excel)
-        df.to_excel(f"C:\\Users\\guilherme.florencio\\Documents\\Robots\\RPAChallenge\\Output\\News_{time_execution}.xlsx", index=False)
+        df.to_excel(f"C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\News_{time_execution}.xlsx", index=False)
+
+@task
+def check_and_create_folder(path):
+    # =-=-==-=- Checks if the folder path exists -=-=-=-=-=
+    if not os.path.exists(path):
+        # =-=-==-=- If it doesn't exist, create the folder -=-=-=-=-=
+        os.makedirs(path)
+
 @task
 def log():
     logging.basicConfig(filename=f'C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs\\robot.log_({time_execution})', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 
 # =-=-==-=- Getting current date -=-=-=-=-=
 now = datetime.now() # current date and time
 # =-=-==-=- Formatting current date -=-=-=-=-=
 time_execution = datetime.now().strftime("%Y%m%d%H%M%S") # Obtaining the unique identifier of each execution "time_execution"
 print(f"Time execution: {time_execution}")
-# =-=-==-=- Get the machine user-=-=-=-=-=
+
+# =-=-==-=- Get the machine user -=-=-=-=-=
 username = os.getlogin()
 
-# Call the function
-log()
+#  =-=-==-=- Calling the functions -=-=-=-=-=
+check_and_create_folder("C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs")
 create_work_item()
+log()
 
 @task
 def main_task():
