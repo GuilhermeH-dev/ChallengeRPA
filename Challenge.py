@@ -7,6 +7,7 @@ import pandas as pd
 from datetime import datetime
 from robocorp import workitems
 from robocorp.tasks import task
+import os
 
 browser = Selenium()
 
@@ -113,7 +114,7 @@ def get_news():
                 # =-=-==-=- Trying to get image URL -=-=-=-=-=                                    
                 elements = browser.get_webelements(f"//html[1]/body[1]/div[3]/bsp-search-results-module[1]/form[1]/div[2]/div[1]/bsp-search-filters[1]/div[1]/main[1]/div[3]/bsp-list-loadmore[1]/div[2]/div[{item}]/div[1]/div[1]/a[1]/picture[1]/img[1]")
                 if elements:
-                    filename = f"downloaded_image{item}.jpg"
+                    filename = f"C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\downloaded_image{item}.jpg"
                     for element in elements:
                         url = browser.get_element_attribute(element, "src")
                         print(f"The URL is: {url}")
@@ -142,14 +143,16 @@ def get_news():
         df.to_excel(f"C:\\Users\\guilherme.florencio\\Documents\\Robots\\RPAChallenge\\Output\\News_{time_execution}.xlsx", index=False)
 @task
 def log():
-    logging.basicConfig(filename=f'C:\\Users\\guilherme.florencio\\Documents\\Robots\\RPAChallenge\\Output\\Logs\\robot.log_({time_execution})', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(filename=f'C:\\Users\\{username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs\\robot.log_({time_execution})', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-#search_phrase = "Breaking News"
+
 # =-=-==-=- Getting current date -=-=-=-=-=
 now = datetime.now() # current date and time
 # =-=-==-=- Formatting current date -=-=-=-=-=
 time_execution = datetime.now().strftime("%Y%m%d%H%M%S") # Obtaining the unique identifier of each execution "time_execution"
 print(f"Time execution: {time_execution}")
+# =-=-==-=- Get the machine user-=-=-=-=-=
+username = os.getlogin()
 
 # Call the function
 log()
@@ -171,7 +174,6 @@ def main_task():
             Attempts +=1
             logging.error(f'{ErrorAttempt}')
             logging.error(f"Attempt {Attempts} failed with error: {ErrorAttempt}")
-            #browser.close_all_browsers()
         finally:
             browser.close_all_browsers()
 
