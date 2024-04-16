@@ -170,7 +170,6 @@ def main_task():
         except Exception as ErrorAttempt:
             Attempts +=1
             logging.error(f'{ErrorAttempt}')
-            print("Deu erro em uma chamada, vai tentar dnv")
             logging.error(f"Attempt {Attempts} failed with error: {ErrorAttempt}")
             #browser.close_all_browsers()
         finally:
