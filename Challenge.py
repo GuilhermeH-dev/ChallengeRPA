@@ -68,7 +68,7 @@ class NewsRobot:
         try:
 
             try:
-                self.browser.wait_until_element_is_visible("//*[contains(@class, 'bx-element-')]/button[text()='Decline']", timeout=75)
+                self.browser.wait_until_element_is_visible("//*[contains(@class, 'bx-element-')]/button[text()='Decline']", timeout=5)
                 self.browser.click_element("//*[contains(@class, 'bx-element-')]/button[text()='Decline']")
             except:
                 pass
@@ -76,7 +76,7 @@ class NewsRobot:
             self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=5)
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
 
-            self.browser.press_key(None, "ESCAPE")
+            self.browser.press_key(None, "ESC")
             # Define the screenshot file name and path
             screenshot_name = "screenshot.png"
             screenshot_path = Path("output") / screenshot_name
