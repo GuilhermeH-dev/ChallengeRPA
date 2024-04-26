@@ -76,7 +76,7 @@ class NewsRobot:
             self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=5)
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
 
-            self.browser.press_key(None, "ESC")
+            self.browser.press_keys(None, "ESC")
             # Define the screenshot file name and path
             screenshot_name = "screenshot.png"
             screenshot_path = Path("output") / screenshot_name
