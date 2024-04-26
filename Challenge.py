@@ -128,9 +128,17 @@ class NewsRobot:
             # Store the screenshot in the Control Room
             storage.set_file(screenshot_name, screenshot_path)
             # =-=-=-= Selecting the "Stories" category =-=-=-= 
-            self.browser.select_checkbox("//input[@value='00000188-f942-d221-a78c-f9570e360000']")
+            #self.browser.select_checkbox("//input[@value='00000188-f942-d221-a78c-f9570e360000']")
+            self.browser.select_checkbox("//span[normalize-space()='Stories']")
 
             sleep(4)
+
+            screenshot_name = "screenshotSETOU_Stories.png"
+            screenshot_path = Path("output") / screenshot_name
+            
+            self.browser.capture_page_screenshot(str(screenshot_path))
+            # Store the screenshot in the Control Room
+            storage.set_file(screenshot_name, screenshot_path)
         except Exception as ErrorSearch:
             logging.error(f'Error during search: {ErrorSearch}')
             raise
