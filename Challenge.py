@@ -106,7 +106,14 @@ class NewsRobot:
             logging.info('Selecting "Newest"')
             self.browser.select_from_list_by_label("//select[@name='s']", 'Newest')
     
-            #sleep(4)
+            sleep(4)
+            screenshot_name = "screenshotNewest.png"
+            screenshot_path = Path("output") / screenshot_name
+            
+            self.browser.capture_page_screenshot(str(screenshot_path))
+            # Store the screenshot in the Control Room
+            storage.set_file(screenshot_name, screenshot_path)
+            
             self.browser.wait_until_element_is_visible("//div[@class='SearchFilter-heading']", timeout=15)
             # =-=-=-= Clicking on "Category" =-=-=-= 
             logging.info('Clicking on "Category"')
