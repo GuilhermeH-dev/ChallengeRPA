@@ -7,17 +7,11 @@ import pandas as pd
 import requests
 from time import sleep
 from robocorp.tasks import task
-
-from robocorp.tasks import task
 from robocorp import storage
 from pathlib import Path
 import re
-
-from robocorp import workitems
-from robocorp.tasks import task
 from RPA.Excel.Files import Files as Excel
 
-from robocorp.workitems import Inputs, Outputs
 
 class NewsRobot:
     def __init__(self):
@@ -34,8 +28,9 @@ class NewsRobot:
         
     
     def setup_logging(self):
-        
-        log_path = f'C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs\\robot.log_{self.time_execution}'
+        log_name = f"robot.log_{self.time_execution}"
+        log_path = Path("output") / log_name
+
         logging.basicConfig(filename=log_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     def open_site(self, url):
@@ -46,16 +41,6 @@ class NewsRobot:
         except Exception as e:
             logging.error(f"It was not possible to load the website within the timeout period: {e}")
             raise
-    def create_work_items_from_excel(self):
-        excel = Excel()
-        excel.open_workbook(f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Input\\Config.xlsx")
-        rows = excel.read_worksheet_as_table(header=True)
-    
-        for row in rows:
-            # Assuming each row is a dictionary with 'key' and 'value' columns
-            key = row["Key"]
-            value = row["Value"]
-            workitems.outputs.create(payload={key: value})
 
     def searching_news(self):
 
@@ -68,28 +53,31 @@ class NewsRobot:
         try:
 
             try:
+                # =-=-==-=- Trying to close pop up if exists -=-=-=-=-=
                 self.browser.wait_until_element_is_visible("//*[contains(@class, 'bx-element-')]/button[text()='Decline']", timeout=5)
                 self.browser.click_element("//*[contains(@class, 'bx-element-')]/button[text()='Decline']")
             except:
                 pass
 
             self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=5)
-            # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
-
-            self.browser.click_element("//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'i accept')]")
             
-            # Define the screenshot file name and path
+            try:
+                # =-=-==-=- Trying to click "I accept" if exists -=-=-=-=-=
+                self.browser.click_element("//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'i accept')]")
+            except:
+                pass
+
+            # =-=-==-=- Define the screenshot file name and path -=-=-=-=-=
             screenshot_name = "screenshot.png"
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
-            # Store the screenshot in the Control Room
+            # =-=-==-=- Store the screenshot in the Control Room -=-=-=-=-=
             storage.set_file(screenshot_name, screenshot_path)
-    
-            # Optionally, retrieve the file path for verification or further operations
             path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
             logging.info("Stored screenshot in Control Room:", path)
 
+            # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
             self.browser.click_element("//button[@class='SearchOverlay-search-button']")
             logging.info('Clicking on "Magnifier" to set the text')
             
@@ -107,11 +95,12 @@ class NewsRobot:
             self.browser.select_from_list_by_label("//select[@name='s']", 'Newest')
     
             sleep(4)
+
             screenshot_name = "screenshotNewest.png"
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
-            # Store the screenshot in the Control Room
+            # =-=-=-= Store the screenshot in the Control Room =-=-=-= 
             storage.set_file(screenshot_name, screenshot_path)
             
             self.browser.wait_until_element_is_visible("//div[@class='SearchFilter-heading']", timeout=15)
@@ -127,18 +116,20 @@ class NewsRobot:
             self.browser.capture_page_screenshot(str(screenshot_path))
             # Store the screenshot in the Control Room
             storage.set_file(screenshot_name, screenshot_path)
+
             # =-=-=-= Selecting the "Stories" category =-=-=-= 
             #self.browser.select_checkbox("//input[@value='00000188-f942-d221-a78c-f9570e360000']")
             self.browser.click_element("//span[normalize-space()='Stories']")
 
             sleep(4)
 
-            screenshot_name = "screenshotSETOU_Stories.png"
+            screenshot_name = "screenshotSelectedStories.png"
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
             # Store the screenshot in the Control Room
             storage.set_file(screenshot_name, screenshot_path)
+
         except Exception as ErrorSearch:
             logging.error(f'Error during search: {ErrorSearch}')
             raise
@@ -150,7 +141,6 @@ class NewsRobot:
         stored_url_list = []
         count_titles_list = []
         count_descriptions_list = []
-        result = False
 
         # =-=-=-= Getting the list elements =-=-=-= 
         web_elements = self.browser.get_webelements("//div[@class='SearchResultsModule-results']//div[@class='PagePromo-content']")
@@ -161,6 +151,7 @@ class NewsRobot:
         logging.info(f"Quantity of news: {Quantity}")
        
         for item in range(1, Quantity + 1):
+            result = False
             
             Title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item}]").text
             Description = self.browser.find_element(f"(//div[@class='PageList-items']//div[@class='PagePromo-description']//span[@class='PagePromoContentIcons-text'])[{item}]").text
@@ -172,7 +163,7 @@ class NewsRobot:
             logging.info("=-=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
             # =-=-=-= Creating Regex =-=-=-=
-            pattern = r'(\$[\d,]+(?:\.\d+)?\b|\b\d+\s*(?:dollars|usd)\b)'  # Exemplo: $10, $10.50, $111,111.11, 11 dollars, 11 USD
+            pattern = r'(\$[\d,]+(?:\.\d+)?\b|\b\d+\s*(?:dollars|usd)\b)'
             
             title_lower = Title.lower()
             description_lower = Description.lower()
@@ -225,24 +216,7 @@ class NewsRobot:
 
     def check_and_create_folder(self, path):
         if not os.path.exists(path):
-            os.makedirs(path)
-
-    def upload_artifacts(self):
-        # Assuming 'output' is the directory where your files are saved
-        output_dir = Path(f'C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\')
-        outputs = Outputs()
-
-        for file_path in output_dir.iterdir():
-            if file_path.is_file() and file_path.suffix in ['.jpg', '.xlsx']:
-                # =-=-==-=- Construct a unique name for the artifact in the cloud -=-=-=-=-=
-                artifact_name = f"artifact-{file_path.name}"
-                # =-=-==-=- Create a new output work item (or use an existing one) -=-=-=-=-=
-                output_item = outputs.create(save=False)
-                # =-=-==-=- Attach the file to the output work item -=-=-=-=-=
-                output_item.add_file(file_path, name=artifact_name)
-                # Save the work item to upload the file and finalize changes
-                output_item.save()
-                
+            os.makedirs(path)                
 
     def main_task(self):
 
