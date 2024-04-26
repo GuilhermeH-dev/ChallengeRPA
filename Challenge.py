@@ -189,12 +189,14 @@ class NewsRobot:
                 # =-=-==-=- Trying to get image URL -=-=-=-=-=                                    
                 elements = self.browser.get_webelements(f"(//div[@class='PageList-items-item']//div[@class='PagePromo-media']//img)[{item}]")
                 if elements:
-                    filename = f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\downloaded_image{item}.jpg"
+                    image_name = f"downloaded_image{item}.jpg"
+                    image_path = Path("output") / image_name
+                    #filename = f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\downloaded_image{item}.jpg"
                     for element in elements:
                         url = self.browser.get_element_attribute(element, "src")
                         has_url = True
                     response = requests.get(url)
-                    with open(filename, 'wb') as image_file:
+                    with open(image_path, 'wb') as image_file:
                         image_file.write(response.content)
                 else:
                     logging.info(f"The news does not have an image")
@@ -207,14 +209,19 @@ class NewsRobot:
             count_titles_list.append(count_title)
             count_descriptions_list.append(count_description)
             if has_url == True:
-                stored_url_list.append(filename)
+                stored_url_list.append(image_path)
             else:
                 stored_url_list.append("The news does not have an image")
         
         # =-=-==-=- Writing date to an Excel File -=-=-=-=-=     
         date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": result}  
         df = pd.DataFrame(date_for_excel)
-        df.to_excel(f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\News_{self.time_execution}.xlsx", index=False)
+        #df.to_excel(f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\News_{self.time_execution}.xlsx", index=False)
+
+        excel_name = f"News_{self.time_execution}.xlsx"
+        excel_path = Path("output") / excel_name
+
+        df.to_excel(excel_path, index=False)
 
     def check_and_create_folder(self, path):
         if not os.path.exists(path):
