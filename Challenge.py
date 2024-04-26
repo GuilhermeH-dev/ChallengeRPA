@@ -75,6 +75,19 @@ class NewsRobot:
 
             self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=5)
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
+
+            # Define the screenshot file name and path
+            screenshot_name = "screenshot.png"
+            screenshot_path = Path("output") / screenshot_name
+            
+            self.browser.capture_page_screenshot(str(screenshot_path))
+            # Store the screenshot in the Control Room
+            storage.set_file(screenshot_name, screenshot_path)
+    
+            # Optionally, retrieve the file path for verification or further operations
+            path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
+            logging.info("Stored screenshot in Control Room:", path)
+            
             self.browser.click_element("//button[@class='SearchOverlay-search-button']")
             logging.info('Clicking on "Magnifier" to set the text')
             
@@ -95,18 +108,7 @@ class NewsRobot:
             self.browser.wait_until_element_is_visible("//div[@class='SearchFilter-heading']", timeout=15)
             # =-=-=-= Clicking on "Category" =-=-=-= 
             logging.info('Clicking on "Category"')
-            # Define the screenshot file name and path
-            screenshot_name = "screenshot.png"
-            screenshot_path = Path("output") / screenshot_name
             
-            self.browser.capture_page_screenshot(str(screenshot_path))
-            # Store the screenshot in the Control Room
-            storage.set_file(screenshot_name, screenshot_path)
-    
-            # Optionally, retrieve the file path for verification or further operations
-            path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
-            logging.info("Stored screenshot in Control Room:", path)
-
             self.browser.click_element("//div[@class='SearchFilter-heading']")
             sleep(4)
 
