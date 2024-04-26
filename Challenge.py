@@ -66,6 +66,13 @@ class NewsRobot:
             item.done()
         
         try:
+
+            try:
+                self.browser.click_element('//*[@id="bx-element-2475152-3lqb4uR"]/button')
+            except:
+                pass
+            
+            self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=5)
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
             self.browser.click_element("//button[@class='SearchOverlay-search-button']")
             logging.info('Clicking on "Magnifier" to set the text')
