@@ -256,7 +256,6 @@ class NewsRobot:
                 self.open_site("https://apnews.com/")
                 self.searching_news()
                 self.get_news()
-                self.upload_artifacts()
                 logging.info('Robot executed successfully.')
                 break
             except Exception as ErrorAttempt:
