@@ -76,6 +76,7 @@ class NewsRobot:
             self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=5)
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
 
+            self.browser.press_key(None, "ESCAPE")
             # Define the screenshot file name and path
             screenshot_name = "screenshot.png"
             screenshot_path = Path("output") / screenshot_name
@@ -87,7 +88,7 @@ class NewsRobot:
             # Optionally, retrieve the file path for verification or further operations
             path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
             logging.info("Stored screenshot in Control Room:", path)
-            
+
             self.browser.click_element("//button[@class='SearchOverlay-search-button']")
             logging.info('Clicking on "Magnifier" to set the text')
             
