@@ -129,7 +129,7 @@ class NewsRobot:
             storage.set_file(screenshot_name, screenshot_path)
             # =-=-=-= Selecting the "Stories" category =-=-=-= 
             #self.browser.select_checkbox("//input[@value='00000188-f942-d221-a78c-f9570e360000']")
-            self.browser.select_checkbox("//span[normalize-space()='Stories']")
+            self.browser.click_element("//span[normalize-space()='Stories']")
 
             sleep(4)
 
