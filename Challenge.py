@@ -22,11 +22,19 @@ from robocorp.workitems import Inputs, Outputs
 class NewsRobot:
     def __init__(self):
         self.browser = Selenium()
-        self.username = os.getlogin()
+        self.username = self.get_username()
         self.time_execution = datetime.now().strftime("%Y%m%d%H%M%S")
         self.setup_logging()
 
+    def get_username(self):
+        try:
+            return os.getlogin()
+        except OSError:
+            return os.environ.get('USERNAME') or os.environ.get('USER')
+        
+    
     def setup_logging(self):
+        
         log_path = f'C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs\\robot.log_{self.time_execution}'
         logging.basicConfig(filename=log_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
