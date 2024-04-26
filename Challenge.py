@@ -111,7 +111,7 @@ class NewsRobot:
             # =-=-=-= Clicking on "Category" =-=-=-= 
             logging.info('Clicking on "Category"')
             
-            self.browser.click_element("//div[@class='SearchFilter-heading']")
+            self.browser.click_element("//div[@class='SearchFilter-heading' and text()='Category']")
             sleep(4)
 
             screenshot_name = "screenshotStories.png"
