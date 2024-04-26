@@ -3,7 +3,7 @@
 
 tasks:
   Run Task:
-    shell: python -m robocorp.tasks run Challenge.py -t main_task
+    shell: python -m robocorp.tasks run Challenge.py -t run_news_robot
 
 environmentConfigs:
   - environment_windows_amd64_freeze.yaml
