@@ -68,8 +68,8 @@ class NewsRobot:
         try:
 
             try:
-                self.browser.wait_until_element_is_visible('//*[@id="bx-element-2475152-3lqb4uR"]/button', timeout=55)
-                self.browser.click_element('//*[@id="bx-element-2475152-3lqb4uR"]/button')
+                self.browser.wait_until_element_is_visible("//*[contains(@class, 'bx-element-')]/button[text()='Decline']", timeout=55)
+                self.browser.click_element("//*[contains(@class, 'bx-element-')]/button[text()='Decline']")
             except:
                 pass
 
