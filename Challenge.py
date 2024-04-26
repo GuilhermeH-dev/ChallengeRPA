@@ -77,7 +77,7 @@ class NewsRobot:
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
 
             self.browser.click_element("//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'i accept')]")
-            #self.browser.press_keys(None, "ESC")
+            
             # Define the screenshot file name and path
             screenshot_name = "screenshot.png"
             screenshot_path = Path("output") / screenshot_name
@@ -114,6 +114,12 @@ class NewsRobot:
             self.browser.click_element("//div[@class='SearchFilter-heading']")
             sleep(4)
 
+            screenshot_name = "screenshotStories.png"
+            screenshot_path = Path("output") / screenshot_name
+            
+            self.browser.capture_page_screenshot(str(screenshot_path))
+            # Store the screenshot in the Control Room
+            storage.set_file(screenshot_name, screenshot_path)
             # =-=-=-= Selecting the "Stories" category =-=-=-= 
             self.browser.select_checkbox("//input[@value='00000188-f942-d221-a78c-f9570e360000']")
 
