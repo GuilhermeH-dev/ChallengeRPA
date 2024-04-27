@@ -205,7 +205,7 @@ class NewsRobot:
                 stored_url_list.append("The news does not have an image")
         
         # =-=-==-=- Writing date to an Excel File -=-=-=-=-=     
-        date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": result}  
+        date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": 'True' if result else 'False'}  
         df = pd.DataFrame(date_for_excel)
         #df.to_excel(f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\News_{self.time_execution}.xlsx", index=False)
 
