@@ -141,6 +141,7 @@ class NewsRobot:
         stored_url_list = []
         count_titles_list = []
         count_descriptions_list = []
+        result_list = []
 
         # =-=-=-= Getting the list elements =-=-=-= 
         web_elements = self.browser.get_webelements("//div[@class='SearchResultsModule-results']//div[@class='PagePromo-content']")
@@ -151,7 +152,7 @@ class NewsRobot:
         logging.info(f"Quantity of news: {Quantity}")
        
         for item in range(1, Quantity + 1):
-            result = False
+            
             
             Title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item}]").text
             Description = self.browser.find_element(f"(//div[@class='PageList-items']//div[@class='PagePromo-description']//span[@class='PagePromoContentIcons-text'])[{item}]").text
@@ -199,13 +200,14 @@ class NewsRobot:
             dates.append(Date)
             count_titles_list.append(count_title)
             count_descriptions_list.append(count_description)
+            result_list.append(result)
             if has_url == True:
                 stored_url_list.append(image_path)
             else:
                 stored_url_list.append("The news does not have an image")
         
         # =-=-==-=- Writing date to an Excel File -=-=-=-=-=     
-        date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": 'True' if result else 'False'}  
+        date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": result_list}  
         df = pd.DataFrame(date_for_excel)
         #df.to_excel(f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\News_{self.time_execution}.xlsx", index=False)
 
