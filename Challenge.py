@@ -62,7 +62,7 @@ class NewsRobot:
             
             try:
                 # =-=-==-=- Trying to click "I accept" if exists -=-=-=-=-=
-                self.browser.click_element("//button[contains(., 'I accept')]")
+                self.browser.click_element("//button[contains(., 'I Accept')]")
             except:
                 pass
 
