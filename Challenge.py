@@ -10,7 +10,6 @@ from robocorp.tasks import task
 from robocorp import storage
 from pathlib import Path
 import re
-from RPA.Excel.Files import Files as Excel
 
 
 class NewsRobot:
@@ -37,7 +36,7 @@ class NewsRobot:
         try:
             logging.info(f'Opening the Website: {url}')
             self.browser.open_available_browser(url)
-            self.browser.wait_until_element_is_visible('//*[@id="Page-header-trending-zephr"]/div[1]/div[3]/bsp-search-overlay/button', timeout=55)
+            self.browser.wait_until_element_is_visible("//button[@class='SearchOverlay-search-button']", timeout=55)
         except Exception as e:
             logging.error(f"It was not possible to load the website within the timeout period: {e}")
             raise
@@ -63,7 +62,7 @@ class NewsRobot:
             
             try:
                 # =-=-==-=- Trying to click "I accept" if exists -=-=-=-=-=
-                self.browser.click_element("//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'i accept')]")
+                self.browser.click_element("//button[contains(., 'I accept')]")
             except:
                 pass
 
@@ -72,10 +71,11 @@ class NewsRobot:
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
+            
             # =-=-==-=- Store the screenshot in the Control Room -=-=-=-=-=
-            storage.set_file(screenshot_name, screenshot_path)
-            path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
-            logging.info("Stored screenshot in Control Room:", path)
+            #storage.set_file(screenshot_name, screenshot_path)
+            #path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
+            #logging.info("Stored screenshot in Control Room:", path)
 
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
             self.browser.click_element("//button[@class='SearchOverlay-search-button']")
@@ -87,6 +87,8 @@ class NewsRobot:
 
             # =-=-=-= Click on "Magnifier" icon to search =-=-=-= 
             self.browser.click_element("//button[@class='SearchOverlay-search-submit']")
+
+            # =-=-=-= Waiting for page to load =-=-=-= 
             self.browser.wait_until_element_is_visible("//div[@class='SearchResultsModule-filters-title']", timeout=40)
             logging.info('Search completed successfully.')
 
@@ -101,13 +103,13 @@ class NewsRobot:
             
             self.browser.capture_page_screenshot(str(screenshot_path))
             # =-=-=-= Store the screenshot in the Control Room =-=-=-= 
-            storage.set_file(screenshot_name, screenshot_path)
+            #storage.set_file(screenshot_name, screenshot_path)
             
             self.browser.wait_until_element_is_visible("//div[@class='SearchFilter-heading']", timeout=15)
             # =-=-=-= Clicking on "Category" =-=-=-= 
             logging.info('Clicking on "Category"')
             
-            self.browser.click_element("//div[@class='SearchFilter-heading' and text()='Category']")
+            self.browser.click_element("//div[@class='SearchFilter-heading']")
             sleep(4)
 
             screenshot_name = "screenshotStories.png"
@@ -115,10 +117,9 @@ class NewsRobot:
             
             self.browser.capture_page_screenshot(str(screenshot_path))
             # Store the screenshot in the Control Room
-            storage.set_file(screenshot_name, screenshot_path)
+            #storage.set_file(screenshot_name, screenshot_path)
 
             # =-=-=-= Selecting the "Stories" category =-=-=-= 
-            #self.browser.select_checkbox("//input[@value='00000188-f942-d221-a78c-f9570e360000']")
             self.browser.click_element("//span[normalize-space()='Stories']")
 
             sleep(4)
@@ -128,10 +129,10 @@ class NewsRobot:
             
             self.browser.capture_page_screenshot(str(screenshot_path))
             # Store the screenshot in the Control Room
-            storage.set_file(screenshot_name, screenshot_path)
+            #storage.set_file(screenshot_name, screenshot_path)
 
-        except Exception as ErrorSearch:
-            logging.error(f'Error during search: {ErrorSearch}')
+        except Exception as error_search:
+            logging.error(f'Error during search: {error_search}')
             raise
 
     def get_news(self):
@@ -147,27 +148,27 @@ class NewsRobot:
         web_elements = self.browser.get_webelements("//div[@class='SearchResultsModule-results']//div[@class='PagePromo-content']")
         
         # =-=-=-= Getting the quantity of items =-=-=-=
-        Quantity = len(web_elements)
+        quantity = len(web_elements)
 
-        logging.info(f"Quantity of news: {Quantity}")
+        logging.info(f"Quantity of news: {quantity}")
        
-        for item in range(1, Quantity + 1):
+        for item in range(1, quantity + 1):
             
+            # =-=-=-= Getting news data =-=-=-=
+            title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item}]").text
+            description = self.browser.find_element(f"(//div[@class='PagePromo-description']/a/span)[{item}]").text
+            date = self.browser.find_element(f"(//span[@class='Timestamp-minago'])[{item}]").text
             
-            Title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item}]").text
-            Description = self.browser.find_element(f"(//div[@class='PageList-items']//div[@class='PagePromo-description']//span[@class='PagePromoContentIcons-text'])[{item}]").text
-            Date = self.browser.find_element(f"//div[@class='SearchResultsModule-results']//div[{item}]//div[1]//div[*]//div[2]").text
-            
-            logging.info(f"Tittle: {Title}")
-            logging.info(f"Description: {Description}")
-            logging.info(f"Date: {Date}")
+            logging.info(f"Tittle: {title}")
+            logging.info(f"Description: {description}")
+            logging.info(f"Date: {date}")
             logging.info("=-=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
             # =-=-=-= Creating Regex =-=-=-=
             pattern = r'(\$[\d,]+(?:\.\d+)?\b|\b\d+\s*(?:dollars|usd)\b)'
             
-            title_lower = Title.lower()
-            description_lower = Description.lower()
+            title_lower = title.lower()
+            description_lower = description.lower()
 
             if re.search(pattern,title_lower) or re.search(pattern,description_lower):
                 result = True
@@ -175,15 +176,15 @@ class NewsRobot:
                 result = False 
 
             has_url = False
-            count_title = len(Title)
-            count_description = len(Description)
+            count_title = len(title)
+            count_description = len(description)
             try:
                 # =-=-==-=- Trying to get image URL -=-=-=-=-=                                    
                 elements = self.browser.get_webelements(f"(//div[@class='PageList-items-item']//div[@class='PagePromo-media']//img)[{item}]")
                 if elements:
                     image_name = f"downloaded_image{item}.jpg"
                     image_path = Path("output") / image_name
-                    #filename = f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\downloaded_image{item}.jpg"
+
                     for element in elements:
                         url = self.browser.get_element_attribute(element, "src")
                         has_url = True
@@ -195,9 +196,9 @@ class NewsRobot:
             except Exception as error_image:
                 logging.error(f"There was an error: {error_image}")
 
-            title_list.append(Title)
-            descriptions_list.append(Description)
-            dates.append(Date)
+            title_list.append(title)
+            descriptions_list.append(description)
+            dates.append(date)
             count_titles_list.append(count_title)
             count_descriptions_list.append(count_description)
             result_list.append(result)
@@ -207,40 +208,32 @@ class NewsRobot:
                 stored_url_list.append("The news does not have an image")
         
         # =-=-==-=- Writing date to an Excel File -=-=-=-=-=     
-        date_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": result_list}  
-        df = pd.DataFrame(date_for_excel)
-        #df.to_excel(f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\News_{self.time_execution}.xlsx", index=False)
-
-        excel_name = f"News_{self.time_execution}.xlsx"
+        data_for_excel = {"Title": title_list, "Description": descriptions_list, "Update News": dates, "UrlPath": stored_url_list,"Title Count Phrases": count_titles_list, "Description Count Phrases": count_descriptions_list, "Amount of money": result_list}  
+        df = pd.DataFrame(data_for_excel)
+        
+        excel_name = f"news_{self.time_execution}.xlsx"
         excel_path = Path("output") / excel_name
 
         df.to_excel(excel_path, index=False)
-
-    def check_and_create_folder(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)                
-
+                
     def main_task(self):
 
-        path_folder = f"C:\\Users\\{self.username}\\Documents\\Robots\\RPAChallenge\\Output\\Logs"
-        self.check_and_create_folder(path_folder)
-
-        Attempts = 0
-        MaxAttempts = 3
-        while Attempts < MaxAttempts:
+        attempts = 0
+        max_attempts = 3
+        while attempts < max_attempts:
             try:
                 self.open_site("https://apnews.com/")
                 self.searching_news()
                 self.get_news()
                 logging.info('Robot executed successfully.')
                 break
-            except Exception as ErrorAttempt:
-                Attempts +=1
-                logging.error(f'Attempt {Attempts} failed with error: {ErrorAttempt}')
+            except Exception as error_attempt:
+                attempts +=1
+                logging.error(f'Attempt {attempts} failed with error: {error_attempt}')
             finally:
                 self.browser.close_all_browsers()
 
-        if Attempts == MaxAttempts:
+        if attempts == max_attempts:
             logging.error('Maximum attempts reached, robot execution failed.')
 
 
