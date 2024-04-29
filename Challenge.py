@@ -156,8 +156,9 @@ class NewsRobot:
             
             # =-=-=-= Getting news data =-=-=-=
             title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item}]").text
-            description = self.browser.find_element(f"(//div[@class='PagePromo-description']/a/span)[{item}]").text
-            date = self.browser.find_element(f"(//span[@class='Timestamp-minago'])[{item}]").text
+            description = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//div[@class='PagePromo-description']/a/span)[{item}]").text
+            date = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='Timestamp-minago'])[{item}]").text
+            
             
             logging.info(f"Tittle: {title}")
             logging.info(f"Description: {description}")
