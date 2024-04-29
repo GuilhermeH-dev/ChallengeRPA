@@ -71,11 +71,6 @@ class NewsRobot:
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
-            
-            # =-=-==-=- Store the screenshot in the Control Room -=-=-=-=-=
-            #storage.set_file(screenshot_name, screenshot_path)
-            #path = storage.get_file(screenshot_name, screenshot_path, exist_ok=True)
-            #logging.info("Stored screenshot in Control Room:", path)
 
             # =-=-=-= Click on "Magnifier" to set the text =-=-=-= 
             self.browser.click_element("//button[@class='SearchOverlay-search-button']")
@@ -102,8 +97,6 @@ class NewsRobot:
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
-            # =-=-=-= Store the screenshot in the Control Room =-=-=-= 
-            #storage.set_file(screenshot_name, screenshot_path)
             
             self.browser.wait_until_element_is_visible("//div[@class='SearchFilter-heading']", timeout=15)
             # =-=-=-= Clicking on "Category" =-=-=-= 
@@ -116,8 +109,6 @@ class NewsRobot:
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
-            # Store the screenshot in the Control Room
-            #storage.set_file(screenshot_name, screenshot_path)
 
             # =-=-=-= Selecting the "Stories" category =-=-=-= 
             self.browser.click_element("//span[normalize-space()='Stories']")
@@ -128,8 +119,6 @@ class NewsRobot:
             screenshot_path = Path("output") / screenshot_name
             
             self.browser.capture_page_screenshot(str(screenshot_path))
-            # Store the screenshot in the Control Room
-            #storage.set_file(screenshot_name, screenshot_path)
 
         except Exception as error_search:
             logging.error(f'Error during search: {error_search}')
@@ -152,12 +141,12 @@ class NewsRobot:
 
         logging.info(f"Quantity of news: {quantity}")
        
-        for item in range(1, quantity + 1):
+        for item_index in range(1, quantity + 1):
             
             # =-=-=-= Getting news data =-=-=-=
-            title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item}]").text
-            description = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//div[@class='PagePromo-description']/a/span)[{item}]").text
-            date = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='Timestamp-minago'])[{item}]").text
+            title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item_index}]").text
+            description = self.browser.find_element(f"(//div[@class='PagePromo-description']/a/span)[{item_index}]").text
+            date = self.browser.find_element(f"//div[@class='SearchResultsModule-results']//div[{item_index}]//div[1]//div[*]//div[2]").text
             
             
             logging.info(f"Tittle: {title}")
@@ -181,9 +170,9 @@ class NewsRobot:
             count_description = len(description)
             try:
                 # =-=-==-=- Trying to get image URL -=-=-=-=-=                                    
-                elements = self.browser.get_webelements(f"(//div[@class='PageList-items-item']//div[@class='PagePromo-media']//img)[{item}]")
+                elements = self.browser.get_webelements(f"(//div[@class='PageList-items-item']//div[@class='PagePromo-media']//img)[{item_index}]")
                 if elements:
-                    image_name = f"downloaded_image{item}.jpg"
+                    image_name = f"downloaded_image{item_index}.jpg"
                     image_path = Path("output") / image_name
 
                     for element in elements:
