@@ -152,9 +152,9 @@ class NewsRobot:
             description_lower = description.lower()
 
             if re.search(pattern,title_lower) or re.search(pattern,description_lower):
-                result = True
+                result = "True"
             else:
-                result = False 
+                result = "False"
 
             has_url = False
             count_title = len(title)
