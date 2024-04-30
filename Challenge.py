@@ -15,17 +15,9 @@ import re
 class NewsRobot:
     def __init__(self):
         self.browser = Selenium()
-        self.username = self.get_username()
         self.time_execution = datetime.now().strftime("%Y%m%d%H%M%S")
         self.setup_logging()
 
-    def get_username(self):
-        try:
-            return os.getlogin()
-        except OSError:
-            return os.environ.get('USERNAME') or os.environ.get('USER')
-        
-    
     def setup_logging(self):
         log_name = f"robot.log_{self.time_execution}"
         log_path = Path("output") / log_name
@@ -101,7 +93,6 @@ class NewsRobot:
             self.browser.wait_until_element_is_visible("//div[@class='SearchFilter-heading']", timeout=15)
             # =-=-=-= Clicking on "Category" =-=-=-= 
             logging.info('Clicking on "Category"')
-            
             self.browser.click_element("//div[@class='SearchFilter-heading']")
             sleep(4)
 
@@ -144,7 +135,7 @@ class NewsRobot:
         for item_index in range(1, quantity + 1):
             
             # =-=-=-= Getting news data =-=-=-=
-            title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//span[@class='PagePromoContentIcons-text'])[{item_index}]").text
+            title = self.browser.find_element(f"(//div[@class='SearchResultsModule-results']//div[@class='PagePromo-title'])[{item_index}]").text
             description = self.browser.find_element(f"(//div[@class='PagePromo-description']/a/span)[{item_index}]").text
             date = self.browser.find_element(f"//div[@class='SearchResultsModule-results']//div[{item_index}]//div[1]//div[*]//div[2]").text
             
