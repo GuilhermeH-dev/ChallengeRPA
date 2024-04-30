@@ -7,7 +7,6 @@ import pandas as pd
 import requests
 from time import sleep
 from robocorp.tasks import task
-from robocorp import storage
 from pathlib import Path
 import re
 
